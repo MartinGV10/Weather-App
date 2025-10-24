@@ -93,6 +93,13 @@ input {
     color: black;
 }
 
+/* Container */
+.container {
+    display: grid;
+    grid-template-columns: .2fr 1fr;
+}
+
+
 /* Sidebar */
 .sidebar {
     padding-left: 20px;
@@ -138,4 +145,22 @@ input {
 
 .item .name {
     font-weight: 400;
+}
+
+/* Actual Page Content */
+
+.page {
+    /* background-color: green; */
+    margin-top: 30px;
+}
+
+.stats {
+    background-color: rgb(38, 51, 75);
+    /* background-color: red; */
+    width: 90%;
+    border-radius: 10px;
+    padding: 10px;
+    align-items: center;
+    justify-content: space-around;
+    display: flex;
 }
