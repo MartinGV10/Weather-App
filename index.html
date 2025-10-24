@@ -12,8 +12,39 @@
 <body>
     <!-- Nav -->
      <div class="nav">
-        <h1>Weather</h1>
+        <h1>Weather App</h1>
+        <form action="">
+            <label for="city">City</label>
+            <input type="text" placeholder="Enter a city here">
+            <button class="submit">
+                <img src="search_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.png" alt="search">
+            </button>
+        </form>
+        <div class="units">
+            <button class="f active">F°</button>
+            <button class="c disabled">C°</button>
+        </div>
      </div>
+
+     <!-- Recent Cities -->
+      <div class="sidebar">
+        <h2 class="recent">Recent Searches</h2>
+        <div class="i">
+            <div class="item">
+                <h3 class="name">Fort Myers, Fl, USA</h3>
+                <h3 class="temp">83°</h3>
+            </div>
+            <div class="item">
+                <h3 class="name">Tampa, Fl, USA</h3>
+                <h3 class="temp">78°</h3>
+            </div>
+            <div class="item">
+                <h3 class="name">Barranquilla, Col</h3>
+                <h3 class="temp">86°</h3>
+            </div>
+
+        </div>
+      </div>
 </body>
 </html>
 <script src="script.js"></script>
