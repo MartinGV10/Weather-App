@@ -150,18 +150,20 @@ input {
 /* Actual Page Content */
 .page {
     /* width: 90%; */
-    margin-top: 30px;
+    padding-top: 30px;
+    padding-left: 10px;
 }
 
 .stats {
     background-color: rgb(38, 51, 75);
     /* background-color: red; */
     width: 90%;
-    border-radius: 10px;
+    border-radius: 20px;
     padding: 25px;
     align-items: center;
     justify-content: space-around;
     display: flex;
+    margin-left: 10px;
 }
 
 .days {
@@ -182,6 +184,7 @@ input {
     gap: 20px;
     border-radius: 20px;
     transition: 0.2s all;
+    /* margin: auto; */
 }
 
 .day:hover {
@@ -199,6 +202,7 @@ input {
     margin-top: 50px;
     gap: 20px;
     padding: 25px;
+    padding-bottom: 7px;
 }
 
 .note {
@@ -218,4 +222,9 @@ input {
 
 .note h2 {
     text-decoration: underline;
+}
+
+.day, .note, .stats {
+    box-shadow: 0px 0px 10px black;
+    border: 2px solid white;
 }
