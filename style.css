@@ -156,7 +156,6 @@ input {
 
 .stats {
     background-color: rgb(38, 51, 75);
-    /* background-color: red; */
     width: 90%;
     border-radius: 20px;
     padding: 25px;
@@ -227,4 +226,9 @@ input {
 .day, .note, .stats {
     box-shadow: 0px 0px 10px black;
     border: 2px solid white;
+}
+
+.day img, .stats img {
+    width: 60px;
+    height: 60px;
 }
