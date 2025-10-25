@@ -21,6 +21,11 @@ const pressure = document.querySelector('.pressure p')
 
 const day = document.querySelectorAll('.day')
 
+const weekday = document.querySelector('.weekday')
+const dayTemp = document.querySelector('.day-temp')
+const dayPic = document.querySelector('.day-pic')
+
+
 
 const images = {
         cloudy: 'Assets/icons8-cloud-50.png',
@@ -33,6 +38,8 @@ const images = {
         storm: 'Assets/icons8-storm-50.png',
 
     }
+
+console.log(dayTemp.textContent)
     
 // const now = new Date()
 // console.log(now)
@@ -45,6 +52,63 @@ form.addEventListener('submit', (e) => {
     input.value = ''
 })
 
+// Convert to C/F
+const f = document.querySelector('.f')
+const c = document.querySelector('.c')
+let x = 0
+let y = 0
+
+f.addEventListener('click', () => {
+    c.classList.remove('active')
+    c.classList.add('disabled')
+    f.classList.add('active')
+    f.classList.remove('disabled')
+    console.log('F -> ' + temp.textContent + f.classList + ' | C -> ' + c.classList)
+    x += 1
+    y = 0
+    console.log('x -> ' + x)
+    if (x == 1) {
+        temp.textContent = cToF(temp.textContent).toFixed(0) + '°'        
+        high.textContent = cToF(high.textContent).toFixed(0)+ '°'
+        low.textContent = cToF(low.textContent).toFixed(0) + '°'
+        day.forEach((item, i) => {
+            const sHigh = item.querySelector('.s-high')
+            const sLow = item.querySelector('.s-low')
+            console.log(sHigh, sLow)
+            sHigh.textContent = cToF(sHigh.textContent).toFixed(0) + '°'
+            sLow.textContent = cToF(sLow.textContent).toFixed(0) + '°'
+        })
+    }
+})
+
+c.addEventListener('click', () => {
+    c.classList.remove('disabled')
+    c.classList.add('active')
+    f.classList.remove('active')
+    f.classList.add('disabled')
+    console.log('C -> ' + temp.textContent + c.classList + ' | F -> ' + f.classList)
+    y += 1
+    x = 0
+    console.log('y -> ' + y)
+    if (y == 1) {
+        temp.textContent = fToC(temp.textContent).toFixed(0) + '°'
+        high.textContent = fToC(high.textContent).toFixed(0) + '°'
+        low.textContent = fToC(low.textContent).toFixed(0) + '°'
+        // dayTemp.textContent = fToC(dayTemp.textContent).toFixed(0) + '°'
+
+        day.forEach((item, i) => {
+            const sHigh = item.querySelector('.s-high')
+            const sLow = item.querySelector('.s-low')
+            console.log(sHigh, sLow)
+            sHigh.textContent = fToC(sHigh.textContent).toFixed(0) + '°'
+            sLow.textContent = fToC(sLow.textContent).toFixed(0) + '°'
+        })
+    }
+
+    
+})
+
+// API Functionality n shi
 async function getWeather() {
     const response = await fetch(`https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${input.value}?key=CC4XZ6KTPU63HBE3C3V22JNRL`)
     const weatherData = await response.json()
@@ -52,12 +116,12 @@ async function getWeather() {
 
     // Set values
     city.textContent = weatherData.resolvedAddress
-    temp.textContent = weatherData.currentConditions.temp + '°'
-    date.textContent = weatherData.currentConditions.datetime
-    feels.textContent = weatherData.currentConditions.feelslike + '°'
-    humidity.textContent = weatherData.currentConditions.humidity + '%'
-    high.textContent = weatherData.days[0].tempmax + '°'
-    low.textContent = weatherData.days[0].tempmin + '°'
+    temp.textContent = weatherData.currentConditions.temp.toFixed(0) + '°'
+    date.textContent = 'Last update at: ' + weatherData.currentConditions.datetime
+    feels.textContent = 'Feels like ' + weatherData.currentConditions.feelslike.toFixed(0) + '°'
+    humidity.textContent = weatherData.currentConditions.humidity + '% Humidty'
+    high.textContent = weatherData.days[0].tempmax.toFixed(0) + '°'
+    low.textContent = weatherData.days[0].tempmin.toFixed(0) + '°'
     windS.textContent = weatherData.currentConditions.windspeed + 'mph'
     windDir.textContent = weatherData.currentConditions.winddir + '°'
     vis.textContent = weatherData.currentConditions.visibility + ' mi'
@@ -67,6 +131,9 @@ async function getWeather() {
     sunrise.textContent = weatherData.currentConditions.sunrise
     pressure.textContent = weatherData.currentConditions.pressure + ' in'
 
+    
+
+    // Get pics
     if (weatherData.currentConditions.conditions == 'Partially cloudy') {
         pic.src = images.partiallyCloudy
     }
@@ -83,6 +150,12 @@ async function getWeather() {
         pic.src = images.rainy
     }
 
+    // Get Day of the Week instead of date
+    const calendarDay = new Date()
+    const dowIndex = calendarDay.getDay()
+    const dow = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+    const dowName =  dow[dowIndex]
+
     // Add locations to array for storing
     locations.push(weatherData.resolvedAddress)
     console.log(locations)
@@ -91,9 +164,12 @@ async function getWeather() {
         const weekday = item.querySelector('.weekday')
         const dayTemp = item.querySelector('.day-temp')
         const dayPic = item.querySelector('.day-pic')
-    
-        weekday.textContent = weatherData.days[i].datetime
-        dayTemp.textContent = weatherData.days[i].tempmax + ' / ' + weatherData.days[i].tempmin
+        const sHigh = item.querySelector('.s-high')
+        const sLow = item.querySelector('.s-low')
+
+        weekday.textContent = dow[i]
+        sHigh.textContent = weatherData.days[i].tempmax.toFixed(0) + '°'
+        sLow.textContent = weatherData.days[i].tempmin.toFixed(0) + '°'
 
         if (weatherData.days[i].conditions == 'Partially cloudy') {
             dayPic.src = images.partiallyCloudy
@@ -112,4 +188,18 @@ async function getWeather() {
         }
     })
     
+}
+
+// Conversion helper functions
+function cToF(temps) {
+    const conv = (parseInt(temps) * 1.8) + 32
+    temps.textContent = conv
+    return conv
+}
+
+function fToC(temps) {
+    const conv = (parseInt(temps) - 32) * (5/9)
+    temps.textContent = conv
+    console.log(conv)
+    return conv
 }
