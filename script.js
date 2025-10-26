@@ -25,6 +25,9 @@ const weekday = document.querySelector('.weekday')
 const dayTemp = document.querySelector('.day-temp')
 const dayPic = document.querySelector('.day-pic')
 
+const sideItems = document.querySelector('.i')
+const delBtn = document.querySelector('.delete')
+const item2 = document.querySelector('.item')
 
 
 const images = {
@@ -44,7 +47,18 @@ console.log(dayTemp.textContent)
 // const now = new Date()
 // console.log(now)
 
-let locations = []
+
+if (!localStorage.getItem('places')) {
+    let location = []
+    localStorage.setItem('places', JSON.stringify(location))
+}
+
+if (!localStorage.getItem('temps')) {
+    let temps = []
+    localStorage.setItem('temps', JSON.stringify(temps))
+}
+
+window.addEventListener('DOMContentLoaded', renderSidebar)
 
 form.addEventListener('submit', (e) => {
     e.preventDefault()
@@ -94,7 +108,6 @@ c.addEventListener('click', () => {
         temp.textContent = fToC(temp.textContent).toFixed(0) + '°'
         high.textContent = fToC(high.textContent).toFixed(0) + '°'
         low.textContent = fToC(low.textContent).toFixed(0) + '°'
-        // dayTemp.textContent = fToC(dayTemp.textContent).toFixed(0) + '°'
 
         day.forEach((item, i) => {
             const sHigh = item.querySelector('.s-high')
@@ -104,9 +117,12 @@ c.addEventListener('click', () => {
             sLow.textContent = fToC(sLow.textContent).toFixed(0) + '°'
         })
     }
-
-    
 })
+
+// Delete Items from sidebar
+
+
+
 
 // API Functionality n shi
 async function getWeather() {
@@ -157,8 +173,7 @@ async function getWeather() {
     const dowName =  dow[dowIndex]
 
     // Add locations to array for storing
-    locations.push(weatherData.resolvedAddress)
-    console.log(locations)
+    saveLocations(weatherData.resolvedAddress, weatherData.currentConditions.temp.toFixed(0))
 
     day.forEach((item, i) => {
         const weekday = item.querySelector('.weekday')
@@ -203,3 +218,69 @@ function fToC(temps) {
     console.log(conv)
     return conv
 }
+
+function saveLocations(cityName, cityTemp) {
+    // Store Items in local storage
+    let locations = JSON.parse(localStorage.getItem('places'))
+    let temps = JSON.parse(localStorage.getItem('temps'))
+    
+    // Add locations to array for storing
+    const exists = locations.findIndex(c => c.toLowerCase() === cityName.toLowerCase())
+    if (exists == -1) {
+        locations.push(cityName)
+        temps.push(cityTemp)
+    }
+    else {
+        temps[exists] = cityTemp
+    }
+    
+    // Save to storage
+    localStorage.setItem('places', JSON.stringify(locations))
+    localStorage.setItem('temps', JSON.stringify(temps))
+
+
+    renderSidebar()
+}
+
+function renderSidebar() {
+    const saved = JSON.parse(localStorage.getItem('places'))
+    const savedTemps = JSON.parse(localStorage.getItem('temps'))
+    sideItems.textContent = ''
+
+    saved.forEach((city, i) => {
+        // Add items to sidebar
+        const sideItem = document.createElement('div')
+        sideItem.classList.add('item')
+
+        const iName = document.createElement('h3')
+        iName.classList.add('name')
+        iName.textContent = city
+
+        const iTemp = document.createElement('h3')
+        iTemp.classList.add('temp')
+        iTemp.textContent = savedTemps[i] + '°'
+
+        const del = document.createElement('img')
+        del.classList.add('delete')
+        del.src = 'Assets/delete.png'
+
+        sideItems.appendChild(sideItem)
+        sideItem.appendChild(del)
+        sideItem.appendChild(iName)
+        sideItem.appendChild(iTemp)
+    })
+}
+
+// delBtn.addEventListener('click', () => {
+//     const places = JSON.parse(localStorage.getItem('places'))
+//     const temps = JSON.parse(localStorage.getItem('temps'))
+
+//     const idx = places.findIndex(c => c == city)
+//     if (idx !==  -1) {
+//         places.splice(idx, 1)
+//         temps.splice(idx, 1)
+//         localStorage.setItem('places', JSON.stringify(places))
+//         localStorage.setItem('temps', JSON.stringify(temps))
+//     }
+//     item2.remove()
+// })
