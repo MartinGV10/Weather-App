@@ -93,6 +93,7 @@ f.addEventListener('click', () => {
             sLow.textContent = cToF(sLow.textContent).toFixed(0) + '°'
         })
     }
+    renderSidebar()
 })
 
 c.addEventListener('click', () => {
@@ -117,12 +118,8 @@ c.addEventListener('click', () => {
             sLow.textContent = fToC(sLow.textContent).toFixed(0) + '°'
         })
     }
+    renderSidebar()
 })
-
-// Delete Items from sidebar
-
-
-
 
 // API Functionality n shi
 async function getWeather() {
@@ -243,41 +240,54 @@ function saveLocations(cityName, cityTemp) {
 }
 
 function renderSidebar() {
-    const saved = JSON.parse(localStorage.getItem('places'))
-    const savedTemps = JSON.parse(localStorage.getItem('temps'))
-    sideItems.textContent = ''
+	const saved = JSON.parse(localStorage.getItem('places'))
+	const savedTemps = JSON.parse(localStorage.getItem('temps'))
+	sideItems.textContent = ''
 
-    saved.forEach((city, i) => {
-        // Add items to sidebar
-        const sideItem = document.createElement('div')
-        sideItem.classList.add('item')
+	saved.forEach((city, i) => {
+		// Add items to sidebar
+		const sideItem = document.createElement('div')
+		sideItem.classList.add('item')
 
-        const iName = document.createElement('h3')
-        iName.classList.add('name')
-        iName.textContent = city
+		const iName = document.createElement('h3')
+		iName.classList.add('name')
+		iName.textContent = city
 
-        const iTemp = document.createElement('h3')
-        iTemp.classList.add('temp')
-        iTemp.textContent = savedTemps[i] + '°'
+		const iTemp = document.createElement('h3')
+		iTemp.classList.add('temp')
+		// show temp in the active unit (stored values are in Fahrenheit)
+		const storedF = Number(savedTemps[i])
+		let display = ''
+		if (!Number.isNaN(storedF)) {
+			if (c.classList.contains('active')) {
+				// convert stored Fahrenheit to Celsius for display
+				const cVal = Math.round((storedF - 32) * (5/9))
+				display = cVal + '°'
+			} else {
+				// show stored Fahrenheit
+				display = Math.round(storedF) + '°'
+			}
+		}
+		iTemp.textContent = display
 
-        const del = document.createElement('img')
-        del.classList.add('delete')
-        del.src = 'Assets/delete.png'
+		const del = document.createElement('img')
+		del.classList.add('delete')
+		del.src = 'Assets/delete.png'
 
-        sideItems.appendChild(sideItem)
-        sideItem.appendChild(del)
-        sideItem.appendChild(iName)
-        sideItem.appendChild(iTemp)
+		sideItems.appendChild(sideItem)
+		sideItem.appendChild(del)
+		sideItem.appendChild(iName)
+		sideItem.appendChild(iTemp)
 
-        del.addEventListener('click', (e) => {
-            e.stopPropagation()
-            const places = JSON.parse(localStorage.getItem('places')) || []
-            const temps = JSON.parse(localStorage.getItem('temps')) || []
-            places.splice(i, 1)
-            temps.splice(i, 1)
-            localStorage.setItem('places', JSON.stringify(places))
-            localStorage.setItem('temps', JSON.stringify(temps))
-            renderSidebar()
-        })
-    })
+		del.addEventListener('click', (e) => {
+			e.stopPropagation()
+			const places = JSON.parse(localStorage.getItem('places')) || []
+			const temps = JSON.parse(localStorage.getItem('temps')) || []
+			places.splice(i, 1)
+			temps.splice(i, 1)
+			localStorage.setItem('places', JSON.stringify(places))
+			localStorage.setItem('temps', JSON.stringify(temps))
+			renderSidebar()
+		})
+	})
 }
