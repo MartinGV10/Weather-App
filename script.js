@@ -268,6 +268,31 @@ function renderSidebar() {
         sideItem.appendChild(del)
         sideItem.appendChild(iName)
         sideItem.appendChild(iTemp)
+
+        // Attach delete handler: remove from arrays, update storage, refresh sidebar
+        del.addEventListener('click', (e) => {
+            e.stopPropagation() // prevent any parent handlers
+            // Re-read arrays in case they changed
+            const places = JSON.parse(localStorage.getItem('places')) || []
+            const temps = JSON.parse(localStorage.getItem('temps')) || []
+            // Remove the item at index i
+            places.splice(i, 1)
+            temps.splice(i, 1)
+            // Save updated arrays
+            localStorage.setItem('places', JSON.stringify(places))
+            localStorage.setItem('temps', JSON.stringify(temps))
+            // Remove the DOM node (or re-render full sidebar)
+            // sideItem.remove()
+            renderSidebar()
+        })
+
+        // delBtn.addEventListener('click', () => {
+        //     saved.splice(i, 1)
+        //     savedTemps.splice(i, 1)
+        //     localStorage.setItem('places', JSON.stringify(location))
+        //     localStorage.setItem('temps', JSON.stringify(location))
+        //     renderSidebar()
+        // })
     })
 }
 
