@@ -43,10 +43,6 @@ const images = {
     }
 
 console.log(dayTemp.textContent)
-    
-// const now = new Date()
-// console.log(now)
-
 
 if (!localStorage.getItem('places')) {
     let location = []
@@ -122,8 +118,8 @@ c.addEventListener('click', () => {
 })
 
 // API Functionality n shi
-async function getWeather() {
-    const response = await fetch(`https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${input.value}?key=CC4XZ6KTPU63HBE3C3V22JNRL`)
+async function getWeather(currentLocation) {
+    const response = await fetch(`https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${input.value || currentLocation}?key=CC4XZ6KTPU63HBE3C3V22JNRL`)
     const weatherData = await response.json()
     console.log(weatherData)
 
@@ -291,3 +287,23 @@ function renderSidebar() {
 		})
 	})
 }
+
+// Get page to ask location on startup
+window.addEventListener('load', () => {
+    if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const {latitude, longitude} = position.coords
+
+                fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
+                .then(response => response.json())
+                .then(data => {
+                    const city = data.address.city || data.address.town || data.address.village
+                    // console.log(city)
+                    getWeather(city)
+
+                })
+            }
+        )
+    }
+})
